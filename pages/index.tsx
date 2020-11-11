@@ -1,24 +1,14 @@
 import { Box, Button, Text } from '@chakra-ui/core'
 import { NextPage } from 'next'
-import Head from 'next/head'
 import firebase from '../src/firebase/client'
 import useAuth from '../src/auth/hooks/index'
 
 const Home: NextPage = () => {
-	const auth = useAuth()
+	const { loggedIn, user, signInWithGoogle, signOut } = useAuth()
 	return (
 		<Box>
-			<Button
-				onClick={() =>
-					firebase
-						.auth()
-						.signInWithPopup(new firebase.auth.GoogleAuthProvider())
-				}>
-				Hello!
-			</Button>
-			{auth.user && (
-				<Button onClick={() => firebase.auth().signOut()}>Logout</Button>
-			)}
+			{loggedIn ? <Text>Hello, {user.displayName}</Text> : <Text>awefo</Text>}
+			<Button onClick={loggedIn ? signOut : signInWithGoogle} />
 		</Box>
 	)
 }
