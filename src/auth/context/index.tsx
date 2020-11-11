@@ -4,7 +4,12 @@ import firebase from '../../firebase/client'
 
 type UserOr = firebase.User | null
 
-export const AuthContext = React.createContext<{ user: UserOr }>(null)
+export const AuthContext = React.createContext<{
+	user: UserOr
+	loggedIn: boolean
+	signInWithGoogle: () => Promise<firebase.auth.UserCredential>
+	signOut: () => Promise<void>
+}>(null)
 
 const AuthProvider: React.FC = ({ children }) => {
 	const [user, setUser] = useState<UserOr>(null)
@@ -31,7 +36,21 @@ const AuthProvider: React.FC = ({ children }) => {
 	)
 
 	return (
-		<AuthContext.Provider value={{ user }}>{children}</AuthContext.Provider>
+		<AuthContext.Provider
+			value={{
+				user,
+				loggedIn: !!user,
+				signInWithGoogle: () =>
+					firebase
+						.auth()
+						.signInWithPopup(new firebase.auth.GoogleAuthProvider()),
+				signOut: async () => {
+					await firebase.auth().signOut()
+					window.location.href = '/'
+				},
+			}}>
+			{children}
+		</AuthContext.Provider>
 	)
 }
 
