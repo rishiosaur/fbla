@@ -12,3 +12,4 @@ LICENSE
 
 firestore.*
 .firebaserc
+.env
